@@ -18,27 +18,5 @@ transactions_csv = pd.read_csv('')
 holidays_events_csv = pd.read_csv('')
 oil_csv = pd.read_csv('')
 
-def data_preprocess(train_csv, test_csv, valid_csv, oil_csv, stores_csv, transactions_csv, holidays_events_csv):
-    # List of datasets to iterate over
-    datasets = {
-        'train': train_csv,
-        'test': test_csv,
-        'valid': valid_csv
-    }
-
-    # Loop through train, test, and valid datasets to merge files
-    for key in datasets:
-        # Merging features to test, train, valid
-        datasets[key] = datasets[key].merge(oil_csv, on='date', how='left')
-        datasets[key] = datasets[key].merge(stores_csv, on='store_nbr', how='left')
-        datasets[key] = datasets[key].merge(transactions_csv, on=['date', 'store_nbr'], how='left')
-        datasets[key] = datasets[key].merge(holidays_events_csv, on='date', how='left')
-
-    # We can add more pre-processing code here, feel free to update code structure
-
+def data_preprocess():
     
-    return datasets['train'], datasets['test'], datasets['valid']
-
-train_processed = merge_datasets(train_csv, test_csv, oil_csv, stores_csv, transactions_csv, holidays_events_csv)
-test_processed = merge_datasets(train_csv, test_csv, oil_csv, stores_csv, transactions_csv, holidays_events_csv)
-valid_processed =merge_datasets(train_csv, test_csv, oil_csv, stores_csv, transactions_csv, holidays_events_csv)
