@@ -24,6 +24,5 @@ oil_csv = pd.read_csv('')
 # use the store_nbr found in stores.csv, and transactions.csv to connect it to train/test.csv/valid.csv
 # use the date attribute found in oil.csv and holiday.csv and connect it to train/test.csv/valid.csv.
 
-We will use the store_nbr found in stores.csv, and transactions.csv to connect it to train/test.csv. Then we will use the date attribute found in oil.csv and holiday.csv and connect it to train/test.csv/valid.csv.
 def data_preprocess():
     
