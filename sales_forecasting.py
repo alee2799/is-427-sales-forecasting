@@ -15,6 +15,11 @@ transactions = pd.read_csv('transactions.csv')
 holidays = pd.read_csv('holidays_events.csv')
 oil_prices = pd.read_csv('oil.csv')
 
+#adds columns to training and test sets; also matches columns by date
+[train, stores, oilprices, holidays, ]
+def combine_data(dataset)
+    for d in dataset:
+
 #Implementation for merging datasets
 #combine the features in stores.csv(city, state), oil.csv(dcoilwtico), 
 #and holiday_events.csv(holiday date, type, locale, locale name), 
@@ -28,10 +33,8 @@ def preprocess(data, cols):
     if cols:
         data = data.drop(cols, axis=1)
     #removes rows with empty values
-    data = data.dropna()
+    data = data.dropna(how='any')
+    return data
     
-    
-preprocess(train, [])
-
-#adds columns to training and test sets; also matches columns by date
-#def combine_datasets():
+train = preprocess(train, [])
+train.info()
