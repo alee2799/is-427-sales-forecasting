@@ -39,9 +39,9 @@ def preprocess(data, cols):
     #encodes each of the string or object data type columns, drops the column, then adds the encoded columns to the data set
     for e in encode_cols:
         data.drop(e, axis=1)
-        encoded_data = encode.fit(data[e].unique().reshape(-1, 1))
-        new_cols = pd.DataFrame(encoded_data, columns=encode.get_feature_names_out(e))
-        data = pd.concat([data, new_cols], axis = 1)
+        x = pd.DataFrame(encode.fit_transform(data[[e]]))
+        y = encode.get_feature_names([e])
+        data = pd.concat([x, y], axis = 1)
     return data
     
 train = preprocess(train, ['cluster', 'description', 'transferred'])
