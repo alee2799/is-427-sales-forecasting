@@ -34,7 +34,7 @@ def preprocess(data, cols):
     #changes date column to datetime datatype
     data['date'] = data['date'].astype('datetime64[ns]')
     #fills oilprice and holiday type columns with 0 if there are empty values
-    data.fillna({'dcoilwtico':0,}, inplace=True)
+    data.fillna({'dcoilwtico':0}, inplace=True)
     encode = OneHotEncoder()
     #encodes each of the string or object data type columns, drops the column, then adds the encoded columns to the data set
     for e in encode_cols:
