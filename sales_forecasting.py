@@ -76,10 +76,13 @@ def k_means_clustering(train, test, valid):
         print("")
 
 def random_forest_classifier(train, test, valid):
-    prints = ["Training Accuracy:","Test Accuracy:","Valid Accuracy"]
+    ls = ":\t"
+    lsa = " Accuracy"+ls
+    #Alex: changed word forms because I am (inconsistently) pedantic about grammar
+    prints = ["Training","Testing","Validiation"]
     header = "\n-- Random Forest Classifier --"
     #Alex: So I can use one statement
-    inline_prints = ["Maximum Tree Depth:\t","\r\nMinimum Leaf Node Samples:\t"]
+    print_super = ["Maximum Tree Depth"+ls, "\r\nMinimum Leaf Node Samples"+ls]
     #Basing the possible tests off of IP2.
     depths = [3,5]
     leaves = [5,10]
@@ -91,16 +94,25 @@ def random_forest_classifier(train, test, valid):
     X_train, y_train = (copy(train)).drop(columns = cols), copy(train[cols])
     X_test, y_test = (copy(test)).drop(columns = cols), copy(test[cols])
     X_valid, y_valid = (copy(valid)).drop(columns = cols), copy(test[cols])
+    #iterate over two parameters: max_depth and min_samples_leaf
     for depth_max in depths:
         for leaf_min in leaves:
-            print()
+            #Single combined print        
+            print(print_super[0] + str(depth_max) + print_super[1] + str(leaf_min))
             rfs_classifier = RandomForestClassifier(min_samples_leaf=leaf_min,max_depth=depth_max)
             rfs_classifier.fit(X_train,y_train)
             accuracy_train = accuracy_score(y_train, rfs_classifier.predict(X_train))
             accuracy_test = accuracy_score(y_test, rfs_classifier.predict(X_test))
-    
-    
-    
+            accuracy_valid = accuracy_score(y_valid, rfs_classifier.predict(X_valid))
+            accuracy_values = [accuracy_train, accuracy_test, accuracy_valid]
+            #Shouldn't be different, but just in case
+            #ended up being longer than individual print statements
+            for i in range(0, min(accuracy_values.size, prints.size)):
+                print(prints[i] + lsa + str(accuracy_values[i]))       
+                #Keep the additional line of spacing at the end
+                if(i == min(accuracy_values.size, prints.size) - 1):
+                    print("")
+
 
 # main function where all calls are made
 def main():
