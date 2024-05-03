@@ -113,6 +113,73 @@ def random_forest_classifier(train, test, valid):
                 if(i == min(accuracy_values.size, prints.size) - 1):
                     print("")
 
+def logistic_regression_classifier(train,test,valid):
+    ls = ":\t"
+    lsa = " Accuracy"+ls
+    #To start the index from 1
+    indents = ["","\t","\t\t","\t\t\t","\t\t\t\t","\t\t\t\t\t"," "]
+    #Alex: changed word forms because I am (inconsistently) pedantic about grammar
+    prints = ["Training","Testing","Validiation"]
+    header = "\n-- Logistic Regression Classifier --"
+    #Alex: So I can use one statement
+    print_super = ["Solver"+ls, "\r\nPenalty"+ls]
+    cols = ['state']
+    #Import statements consisent with previous ones
+    #var name changes subjective, 
+    
+    #deep copy might be safer, and protects the input datasets 
+    X_train, y_train = (copy(train)).drop(columns = cols), copy(train[cols])
+    X_test, y_test = (copy(test)).drop(columns = cols), copy(test[cols])
+    X_valid, y_valid = (copy(valid)).drop(columns = cols), copy(test[cols])
+    #seperate print and definition.
+    print(header)    
+    K_values = [1, 3, 5, 7]
+    
+    #Alex: Testing how to get clusters
+    #(knn_classifier.get_params()).get("n_clusters")
+    
+
+
+#Alex: I have to replicate Maria's function directly, as it does not return anything
+#per-cluster
+#print data mirrored
+def obj_KMeans(train, test, valid,K_list,ls,lsa,prints,indent):
+    ls = ":"+indent[1]
+    #single space
+    lsa = indent[-1]+"Accuracy"+ls
+    #Alex: changed word forms because I am (inconsistently) pedantic about grammar
+    prints = ["Training","Testing","Validiation"]
+    header = "\r\n\t-- K-Means INSTANCE --"
+    #Alex: So I can use one statement
+    neighbor_text = indent[2]+"Neighbors"+ls
+    #Basing the possible tests off of IP2.
+    depths = [3,5]
+    leaves = [5,10]
+    cols = ['state']
+    #Import statements consisent with previous ones
+    #var name changes subjective, 
+    
+    #deep copy might be safer, and protects the input datasets 
+    X_train, y_train = (copy(train)).drop(cdolumns = cols), copy(train[cols])
+    X_test, y_test = (copy(test)).drop(columns = cols), copy(test[cols])
+    X_valid, y_valid = (copy(valid)).drop(columns = cols), copy(test[cols])
+    #seperate print and definition.
+    
+    for neighbor in K_list:
+        print(neighbor_text+neighbor)
+        #random solution, 
+        KNN_instance = K
+        cluster_map = pd.DataFrame()
+        cluster_map['data_indicies'] = train.index.values
+        cluster_map['cluster'] = km.labels_
+        ##use indent to predefine the indents
+        
+        
+        
+    
+    
+
+
 
 # main function where all calls are made
 def main():
