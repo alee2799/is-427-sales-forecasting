@@ -94,6 +94,8 @@ def random_forest_classifier(train, test, valid):
     X_train, y_train = (copy(train)).drop(columns = cols), copy(train[cols])
     X_test, y_test = (copy(test)).drop(columns = cols), copy(test[cols])
     X_valid, y_valid = (copy(valid)).drop(columns = cols), copy(test[cols])
+    #seperate print and definition.
+    print(header)
     #iterate over two parameters: max_depth and min_samples_leaf
     for depth_max in depths:
         for leaf_min in leaves:
