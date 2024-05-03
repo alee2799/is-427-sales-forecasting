@@ -1,7 +1,5 @@
 import pandas as pd
 from copy import deepcopy as copy
-from sklearn.pipeline import Pipeline
-from sklearn.model_selection import ParameterGrid
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.preprocessing import LabelEncoder
 from sklearn.neighbors import KNeighborsClassifier
