@@ -1,4 +1,5 @@
 import pandas as pd
+from copy import deepcopy as copy
 from sklearn.pipeline import Pipeline
 from sklearn.model_selection import ParameterGrid
 from sklearn.preprocessing import OneHotEncoder
@@ -73,6 +74,33 @@ def k_means_clustering(train, test, valid):
         print("Test Accuracy:", test_accuracy)
         print("Valid Accuracy:", valid_accuracy)
         print("")
+
+def random_forest_classifier(train, test, valid):
+    prints = ["Training Accuracy:","Test Accuracy:","Valid Accuracy"]
+    header = "\n-- Random Forest Classifier --"
+    #Alex: So I can use one statement
+    inline_prints = ["Maximum Tree Depth:\t","\r\nMinimum Leaf Node Samples:\t"]
+    #Basing the possible tests off of IP2.
+    depths = [3,5]
+    leaves = [5,10]
+    cols = ['state']
+    #Import statements consisent with previous ones
+    #var name changes subjective, 
+    
+    #deep copy might be safer, and protects the input datasets 
+    X_train, y_train = (copy(train)).drop(columns = cols), copy(train[cols])
+    X_test, y_test = (copy(test)).drop(columns = cols), copy(test[cols])
+    X_valid, y_valid = (copy(valid)).drop(columns = cols), copy(test[cols])
+    for depth_max in depths:
+        for leaf_min in leaves:
+            print()
+            rfs_classifier = RandomForestClassifier(min_samples_leaf=leaf_min,max_depth=depth_max)
+            rfs_classifier.fit(X_train,y_train)
+            accuracy_train = accuracy_score(y_train, rfs_classifier.predict(X_train))
+            accuracy_test = accuracy_score(y_test, rfs_classifier.predict(X_test))
+    
+    
+    
 
 # main function where all calls are made
 def main():
