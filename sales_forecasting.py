@@ -8,14 +8,16 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 
-#Implementation for preprocessing datasets
-#combine the features in stores.csv(city, state), oil.csv(dcoilwtico), 
-#and holiday_events.csv(holiday date, type, locale, locale name), 
-#transactions.csv (transactions) into train.csv, test.csv, valid.csv
-# use the store_nbr found in stores.csv, and transactions.csv 
-#to connect it to train/test.csv/valid.csv
-# use the date attribute found in oil.csv and holiday.csv 
-#and connect it to train/test.csv/valid.csv.
+""" 
+Implementation for preprocessing datasets
+combine the features in stores.csv(city, state), oil.csv(dcoilwtico), 
+and holiday_events.csv(holiday date, type, locale, locale name), 
+transactions.csv (transactions) into train.csv, test.csv, valid.csv
+use the store_nbr found in stores.csv, and transactions.csv 
+to connect it to train/test.csv/valid.csv
+use the date attribute found in oil.csv and holiday.csv 
+and connect it to train/test.csv/valid.csv.
+"""
 
 #reads files and combines them together then returns the created data set
 def combine_data(files):
