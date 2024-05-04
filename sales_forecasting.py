@@ -116,6 +116,8 @@ def random_forest_classifier(train, test, valid):
                 if(i == min(accuracy_values.size, prints.size) - 1):
                     print("")
 
+#TODO: Ideally, the K-means function should be called here, with modified prints
+
 def logistic_regression_classifier(train,test,valid):
     ls = ":\t"
     lsa = " Accuracy"+ls
@@ -146,6 +148,9 @@ def logistic_regression_classifier(train,test,valid):
 #Alex: I have to replicate Maria's function directly, as it does not return anything
 #per-cluster
 #print data mirrored
+#FIXME: not a good idea to have two nearly identical functions
+#TODO: We should figure out how to merge this with K-means
+#NOTE: half the arguments are just to pass print strings,  so they only need to be defined once
 def obj_KMeans(train, test, valid,K_list,ls,lsa,prints,indent):
     ls = ":"+indent[1]
     #single space
