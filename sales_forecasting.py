@@ -73,7 +73,10 @@ def k_means_clustering(train, test, valid):
         print("Valid Accuracy:", valid_accuracy)
         print("")
 
+#Alex: Misread a communication, thought I was doing this
+#TODO: Did not test this, but VSCode (because PyCharm is annoying enough, and I don't want to add GitHub on top of that)
 def random_forest_classifier(train, test, valid):
+    #NOTE: actual printf if possible, instead of this mess-
     ls = ":\t"
     lsa = " Accuracy"+ls
     #Alex: changed word forms because I am (inconsistently) pedantic about grammar
@@ -136,7 +139,7 @@ def logistic_regression_classifier(train,test,valid):
     K_values = [1, 3, 5, 7]
     
     #Alex: Testing how to get clusters
-    #(knn_classifier.get_params()).get("n_clusters")
+    #(knn_classifier.get_params()).get("n_clusters  ")
     
 
 
