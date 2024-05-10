@@ -1,44 +1,47 @@
 import pandas as pd
-from copy import deepcopy as copy
+import matplotlib as plt
+from sklearn.metrics import mean_squared_log_error
+from sklearn.pipeline import Pipeline
+from sklearn.model_selection import ParameterGrid
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.preprocessing import LabelEncoder
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
-from sklearn.model_selection import train_test_split
 
-#Implementation for preprocessing datasets
-#combine the features in stores.csv(city, state), oil.csv(dcoilwtico), 
-#and holiday_events.csv(holiday date, type, locale, locale name), 
-#transactions.csv (transactions) into train.csv, test.csv, valid.csv
-# use the store_nbr found in stores.csv, and transactions.csv 
-#to connect it to train/test.csv/valid.csv
-# use the date attribute found in oil.csv and holiday.csv 
-#and connect it to train/test.csv/valid.csv.
-
-#reads files and combines them together then returns the created data set
-def combine_data(files):
-    data = pd.concat([pd.read_csv(f) for f in files], ignore_index=True)
+#reads files, changes date column values to date-time format, and creates data frames
+def read_file(file):
+    data = pd.read_csv(file)
+    if 'date' in data.columns: 
+        data['date'] = pd.to_datetime(data['date'], format='%Y-%m-%d')
     return data
+train = read_file('train.csv')
+stores = read_file('stores.csv')
+oil = read_file('oil.csv')
+holidays = read_file('holidays_events.csv')
+transactions = read_file('transactions.csv')
 
-def preprocess(data, cols):
-    encode_cols = ['family', 'city', 'state', 'type', 'locale', 'locale_name', 'transactions']
-    #checks if there is an array of columns to remove then removes them from dataset
-    if cols:
-        data = data.drop(cols, axis=1)
-    #changes date column to datetime datatype
-    data['date'] = data['date'].astype('datetime64[ns]')
-    #fills oilprice and holiday type columns with 0 if there are empty values
-    data.fillna({'dcoilwtico':0}, inplace=True)
-    encode = OneHotEncoder()
-    #encodes each of the string or object data type columns, drops the column, then adds the encoded columns to the data set
-    for e in encode_cols:
-        data.drop(e, axis=1)
-        x = pd.DataFrame(encode.fit_transform(data[[e]]))
-        y = encode.get_feature_names([e])
-        data = pd.concat([x, y], axis = 1)
-    return data
+#remove zeros from stores dataframe and then combine train and stores data frames
+zeros = train.groupby(['id', 'store_nbr', 'family']).sales.sum().reset_index().sort_values(['family','store_nbr'])
+zeros = zeros[zeros.sales == 0]
+join = train.merge(zeros[zeros.sales == 0].drop("sales",axis = 1), how='outer', indicator=True)
+train = join[~(join._merge == 'both')].drop(['id', '_merge'], axis = 1).reset_index()
+train = train.drop(['index'], axis=1)
+#adding number of transactions to train data set by date and store_nbr
+train = pd.merge(train, transactions, on=['date', 'store_nbr'])
+#adding oil prices by date and then removing days with no oil prices reported
+train = pd.merge(train, oil, on=['date'])
+train = train[train['dcoilwtico'].notna()]
+
+#dropping description and transferred columns from holidays data frame
+#adding the holidays columns to the train data frame, filling the NaN values
+#one hot encoding the holidays type,locale, and locale name coulmns
+holidays = holidays.drop(['description', 'transferred'], axis=1)
+train = pd.merge(train, holidays, on=['date'], how='left')
+train['type'] = train['type'].fillna(value='No Event or Holiday')
+train['locale'] = train['locale'].fillna(value='National')
+train['locale_name'] = train['locale_name'].fillna(value='Ecuador')
 
 # k-means clutering where clusters data based on state
 def k_means_clustering(train, test, valid):
