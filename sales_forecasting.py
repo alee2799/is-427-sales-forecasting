@@ -1,5 +1,7 @@
 import pandas as pd
 import matplotlib as plt
+import plotly.express as px
+import seaborn as sb
 from sklearn.metrics import mean_squared_log_error
 from sklearn.pipeline import Pipeline
 from sklearn.model_selection import ParameterGrid
@@ -36,12 +38,56 @@ train = train[train['dcoilwtico'].notna()]
 
 #dropping description and transferred columns from holidays data frame
 #adding the holidays columns to the train data frame, filling the NaN values
-#one hot encoding the holidays type,locale, and locale name coulmns
-holidays = holidays.drop(['description', 'transferred'], axis=1)
+holidays = holidays.drop(['description', 'transferred', 'locale', 'locale_name'], axis=1)
 train = pd.merge(train, holidays, on=['date'], how='left')
 train['type'] = train['type'].fillna(value='No Event or Holiday')
-train['locale'] = train['locale'].fillna(value='National')
-train['locale_name'] = train['locale_name'].fillna(value='Ecuador')
+#train['locale'] = train['locale'].fillna(value='National')
+#train['locale_name'] = train['locale_name'].fillna(value='Ecuador')
+
+#data vizualization and stats
+'''
+train['family'].unique()
+describe_data.groupby('family').describe()['sales'].applymap(lambda x: f"{x:.2f}")
+dtrain = train.set_index("date").groupby("family").resample("D").sales.sum().reset_index()
+gfig = sb.lineplot(dtrain[dtrain['family']=='GROCERY I'],x='date',y='sales').set_title('GROCERY I SALES')
+wtrain = train.set_index("date").groupby("family").resample("W").sales.sum().reset_index()
+family = train['family'].unique()
+cond = wtrain['family'].isin(family)
+px.line(wtrain[cond], x = "date", y = "sales", color = "family", title = "Weekly Total Sales by Family")
+'''
+'''
+temp = train.groupby('type').sum('sales').reset_index().sort_values(by='sales', ascending=False)
+temp = temp[['type','sales']]
+temp['percent']=(temp['sales']/temp['sales'].sum())
+temp['percent'] = temp['percent'].apply(lambda x: f'{x:.0%}')
+temp['cumulative']=(temp['sales']/temp['sales'].sum()).cumsum()
+temp['cumulative'] = temp['cumulative'].apply(lambda x: f'{x:.0%}')
+fig1 = px.bar(temp, x="type",y="sales",title = "Hoildays affect on sales",text="cumulative")
+fig1.show()
+'''
+#encoding object dtype columns
+encoder = OneHotEncoder()
+#reduce number of columns to encode
+train['family'] = train['family'].replace(['AUTOMOTIVE', 'BABY CARE', 'BEAUTY', 'BOOKS', 'BREAD/BAKERY',
+       'CELEBRATION', 'DELI', 'FROZEN FOODS', 'GROCERY II',
+       'HARDWARE', 'HOME AND KITCHEN I', 'HOME AND KITCHEN II',
+       'HOME APPLIANCES', 'HOME CARE', 'LADIESWEAR', 'LAWN AND GARDEN',
+       'LINGERIE', 'LIQUOR,WINE,BEER', 'MAGAZINES','PET SUPPLIES', 'PLAYERS AND ELECTRONICS', 'PREPARED FOODS', 'SCHOOL AND OFFICE SUPPLIES',
+       'SEAFOOD'],'OTHERS')
+newtrain = train.groupby(['date', 'family']).sum('sales').reset_index()
+cols_encode=['family','type']
+for col in cols_encode:
+  encoded = encoder.fit_transform(train[[col]])
+  feature_names = encoder.categories_[0]
+  onehot_df = pd.DataFrame(encoded.toarray(), columns=feature_names)
+  train= pd.concat([train, onehot_df], axis=1)
+train.drop(cols_encode, axis=1, inplace=True)
+#splitting train data frame into test, train, and valid data frames by date
+test = train.loc[train['date'] > pd.to_datetime('2016-12-31')]
+valid = train.loc[train['date'] < pd.to_datetime('2014-01-01')]
+train = train.loc[(train['date'] >= pd.to_datetime('2014-01-01')) & (train['date'] <= pd.to_datetime('2016-12-31'))]
+#train.info()
+#train.head()
 
 # k-means clutering where clusters data based on state
 def k_means_clustering(train, test, valid):
