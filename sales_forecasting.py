@@ -1,12 +1,11 @@
 import pandas as pd
-import matplotlib as plt
+import matplotlib.pyplot as plt
 import plotly.express as px
 import seaborn as sb
 from sklearn.metrics import mean_squared_log_error
 from sklearn.pipeline import Pipeline
 from sklearn.model_selection import ParameterGrid
 from sklearn.preprocessing import OneHotEncoder
-from sklearn.preprocessing import LabelEncoder
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
@@ -45,26 +44,31 @@ train['type'] = train['type'].fillna(value='No Event or Holiday')
 #train['locale_name'] = train['locale_name'].fillna(value='Ecuador')
 
 #data vizualization and stats
-'''
-train['family'].unique()
-describe_data.groupby('family').describe()['sales'].applymap(lambda x: f"{x:.2f}")
-dtrain = train.set_index("date").groupby("family").resample("D").sales.sum().reset_index()
-gfig = sb.lineplot(dtrain[dtrain['family']=='GROCERY I'],x='date',y='sales').set_title('GROCERY I SALES')
-wtrain = train.set_index("date").groupby("family").resample("W").sales.sum().reset_index()
-family = train['family'].unique()
-cond = wtrain['family'].isin(family)
-px.line(wtrain[cond], x = "date", y = "sales", color = "family", title = "Weekly Total Sales by Family")
-'''
-'''
+
+#shows gas prices by date
+fig, axes = plt.subplots(nrows=1, ncols=1, figsize=(25,15))
+oil.plot.line(x="date", y="dcoilwtico", color='g', title ="Oil Prices from 2013 to 2017", ax = axes, rot=0)
+plt.show()
+
+#shows total sales by family
+temp = train.groupby('family').sum('sales').reset_index().sort_values(by='sales', ascending=False)
+temp = temp[['family','sales']]
+temp['percent']=(temp['sales']/temp['sales'].sum())
+temp['percent'] = temp['percent'].apply(lambda x: f'{x:.0%}')
+temp['cumulative']=(temp['sales']/temp['sales'].sum()).cumsum()
+temp['cumulative'] = temp['cumulative'].apply(lambda x: f'{x:.0%}')
+fig1 = px.bar(temp, x="family",y="sales",title = "Total Sales by Family Type",text="cumulative")
+fig1.show()
+
+#shows amount of total sales by holiday type
 temp = train.groupby('type').sum('sales').reset_index().sort_values(by='sales', ascending=False)
 temp = temp[['type','sales']]
 temp['percent']=(temp['sales']/temp['sales'].sum())
 temp['percent'] = temp['percent'].apply(lambda x: f'{x:.0%}')
 temp['cumulative']=(temp['sales']/temp['sales'].sum()).cumsum()
 temp['cumulative'] = temp['cumulative'].apply(lambda x: f'{x:.0%}')
-fig1 = px.bar(temp, x="type",y="sales",title = "Hoildays affect on sales",text="cumulative")
+fig1 = px.bar(temp, x="type",y="sales",title = "Total Sales by Holiday Type",text="cumulative")
 fig1.show()
-'''
 #encoding object dtype columns
 encoder = OneHotEncoder()
 #reduce number of columns to encode
